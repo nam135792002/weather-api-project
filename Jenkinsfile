@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout GitHub Code') {
             steps {
-                git 'https://github.com/nam135792002/weather-api-project.git'
+                git branch: 'dev', url: 'https://github.com/nam135792002/weather-api-project.git'
                 echo 'Checked out GitHub code'
             }
         }
