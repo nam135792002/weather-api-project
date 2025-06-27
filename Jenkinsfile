@@ -17,8 +17,8 @@ pipeline {
 
         stage('Checkout GitHub Code') {
             steps {
-                git branch: 'dev', url: 'https://github.com/nam135792002/weather-api-project.git'
                 echo 'Checked out GitHub code'
+		checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins-gcp-weather-api-project', url: 'https://github.com/nam135792002/weather-api-project.git']])
             }
         }
 
