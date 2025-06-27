@@ -22,4 +22,18 @@ public class LocationService {
     public Location get(String code){
         return locationRepository.findLocationByCode(code).orElse(null);
     }
+
+    public Location update(Location locationRequest) throws LocationNotFoundException {
+        String code = locationRequest.getCode();
+        Location locationInDB = locationRepository.findLocationByCode(code)
+                .orElseThrow(() -> new LocationNotFoundException(String.format("No location found with the given code: %s", code)));
+
+        locationInDB.setCityName(locationRequest.getCityName());
+        locationInDB.setCountryName(locationRequest.getCountryName());
+        locationInDB.setCountryCode(locationRequest.getCountryCode());
+        locationInDB.setRegionName(locationRequest.getRegionName());
+        locationInDB.setEnabled(locationRequest.isEnabled());
+
+        return locationRepository.save(locationInDB);
+    }
 }

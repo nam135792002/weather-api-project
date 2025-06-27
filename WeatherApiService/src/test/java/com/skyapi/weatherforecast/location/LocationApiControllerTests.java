@@ -133,7 +133,45 @@ public class LocationApiControllerTests {
 
     @Test
     public void get_parameterCodeValid_response200OkStatus() throws Exception {
-        String requestUri = locationApiPath.concat("/").concat("NYC_USA");
+        String code = "NYC_USA";
+        String requestUri = locationApiPath.concat("/").concat(code);
 
+        Location location = Location.builder()
+                .code("NYC_USA")
+                .cityName("New York City")
+                .regionName("New York")
+                .countryName("United States of America")
+                .countryCode("US")
+                .enabled(true)
+                .build();
+
+        Mockito.when(locationService.get(code)).thenReturn(location);
+
+        this.mockMvc.perform(MockMvcRequestBuilders.get(requestUri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("NYC_USA"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cityName").value("New York City"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void updateLocation_parameterCodeInvalid_response404NotFoundStatus() throws Exception {
+        Location location = Location.builder()
+                .code("ABCDEF")
+                .cityName("New York City")
+                .regionName("New York")
+                .countryName("United States of America")
+                .countryCode("US")
+                .enabled(true)
+                .build();
+
+        Mockito.when(locationService.update(location)).thenThrow(new LocationNotFoundException("No location found"));
+
+        this.mockMvc.perform(MockMvcRequestBuilders.put(locationApiPath)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(location)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
     }
 }
