@@ -6,6 +6,10 @@ pipeline {
         maven 'maven387'
     }
 
+    environment {
+	SONAR_SCANNER_HOME = tool 'sonar7'
+    }
+
     stages {
         stage('Initialize Pipeline') {
             steps {
@@ -39,6 +43,18 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo 'Static code analysis with SonarQube (placeholder)'
+		withCredentials([string(credentialsId: 'sonartoken', variable: 'sonarToken')]) {
+		    withSonarQubeEnv('sonar') {
+			    sh '''
+					  ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+					  -Dsonar.projectKey=jenkins_gcp_weatherforecast_api_prj \
+					  -Dsonar.sources=. \
+					  -Dsonar.host.url=http://172.18.0.3:9000 \
+       					  -Dsonar.java.binaries=WeatherApiService/target/classes \
+					  -Dsonar.token=$sonarToken
+       				'''
+			}
+		}
             }
         }
 
