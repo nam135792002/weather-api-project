@@ -1,0 +1,2 @@
+sonar.project=jenkins_gcp_weatherforecast_api_prj 
+sonar.organization=nam135792002
