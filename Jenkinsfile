@@ -44,7 +44,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                echo 'Static code analysis with SonarQube (placeholder)'
+                echo 'Static code analysis with SonarQube'
 		withCredentials([string(credentialsId: 'sonartoken', variable: 'sonarToken')]) {
 		    withSonarQubeEnv('sonar') {
 			    sh '''
@@ -60,19 +60,28 @@ pipeline {
             }
         }
 
-        stage('Trivy Scan') {
+        stage('Trivy FS Scan') {
             steps {
-                echo 'Scanning Docker image with Trivy (placeholder)'
+                echo 'Scanning file system with Trivy FS ...'
 		sh 'trivy fs --format table -o FSScanReport.html'
             }
         }
 
         stage('Build & Tag Docker Image') {
             steps {
-                echo 'Building and tagging Docker image (placeholder)'
+                echo 'Building and tagging Docker image'
 		script {
 			sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
 		}
+            }
+        }
+
+	stage('Trivy Security Scan') {
+            steps {
+                echo 'Scanning Docker image with Trivy'
+		sh '''
+  			trivy --severity HIGH,CRITICAL --no-progress --format table -o trivyFSScanReport.html image ${IMAGE_NAME}:${IMAGE_TAG}
+     		'''
             }
         }
     }
