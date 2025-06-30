@@ -93,7 +93,7 @@ pipeline {
     				'''
 				script {
 					sh '''
-						gcloud artifacts repositories create java-app-repo-02 --repository-format=docker --location=us --description="Docker repository" --project=$GCP_PROJECT_ID
+						gcloud artifacts repositories create java-app-repo-${IMAGE_TAG} --repository-format=docker --location=us --description="Docker repository" --project=$GCP_PROJECT_ID
      					'''
 					sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${FULL_IMAGE_NAME}"
 					sh "docker push ${FULL_IMAGE_NAME}"
@@ -103,5 +103,30 @@ pipeline {
 		}
             }
         }
+
+	stage('Deploy to Cloud Run') {
+		steps {
+			echo 'Deploying Image to Google Cloud Run'
+			withCredentials([file(credentialsId: 'gcpjmsa', variable: 'gcpCred')]) {
+    				withEnv(["GOOGLE_APPLICATION_CREDENTIALS=$gcpCred"]) {
+					sh '''
+						gcloud run deploy $SERVICE_NAME \
+            					--image=$FULL_IMAGE_NAME \
+            					--region=$REGION \
+            					--platform=managed \
+            					--allow-unauthenticated \
+		 				--port=8090 \
+            					--memory=512Mi \
+            					--quiet
+     					'''
+				}
+			}
+		}
+	}
+	stage('Get Cloud Run Service URL') {
+            steps {
+			echo 'Getting Cloud Run Service URL'
+            	}
+       	 	}
 	}
 }
