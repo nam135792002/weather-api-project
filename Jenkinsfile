@@ -61,6 +61,7 @@ pipeline {
         stage('Trivy Scan') {
             steps {
                 echo 'Scanning Docker image with Trivy (placeholder)'
+		sh 'trivy fs --format table -o FSScanReport.html'
             }
         }
 
