@@ -11,7 +11,7 @@ pipeline {
             steps {
                 echo 'Initializing Pipeline...'
                 sh 'java -version'
-		        sh 'mvn -version'
+		sh 'mvn -version'
             }
         }
 
@@ -24,12 +24,14 @@ pipeline {
 
         stage('Maven Build') {
             steps {
-                sh 'mvn clean install'
+                echo 'Building Weatherforecast Api Project'
+		sh 'mvn clean package'
             }
         }
 
         stage('JUnit Test') {
             steps {
+		echo 'JUnit Test'
                 sh 'mvn test'
             }
         }
