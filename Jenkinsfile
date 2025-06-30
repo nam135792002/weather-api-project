@@ -11,7 +11,7 @@ pipeline {
 	IMAGE_NAME = "java-app"
 	IMAGE_TAG = "${BUILD_NUMBER}"
 	GCP_PROJECT_ID = "core-respect-464508-a2"
-	FULL_IMAGE_NAME = "us-docker.pkg.dev/${GCP_PROJECT_ID}/java-app-repo-02/${IMAGE_NAME}:${IMAGE_TAG}"
+	FULL_IMAGE_NAME = "us-docker.pkg.dev/${GCP_PROJECT_ID}/java-app-repo-/${IMAGE_NAME}:${IMAGE_TAG}"
     }
 
     stages {
