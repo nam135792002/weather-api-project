@@ -107,7 +107,7 @@ pipeline {
 	stage('Deploy to Cloud Run') {
 		steps {
 			echo 'Deploying Image to Google Cloud Run'
-			withCredentials([file(credentialsId: 'gcpjmsa', variable: 'gcpCred')]) {
+			withCredentials([file(credentialsId: 'gcpjenkin', variable: 'gcpCred')]) {
     				withEnv(["GOOGLE_APPLICATION_CREDENTIALS=$gcpCred"]) {
 					sh '''
 						gcloud run deploy $SERVICE_NAME \
