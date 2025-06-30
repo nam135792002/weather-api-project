@@ -2,7 +2,7 @@ FROM openjdk:11-jre-slim
 
 WORKDIR /app
 
-COPY WeatherApiService/target/hello-world-1.0-SNAPSHOT.jar /app/hello-world.jar
+COPY WeatherApiService/target/WeatherApiService-1.0.0.jar /app/WeatherApiService-1.0.0.jar
 
 EXPOSE 8090
 
