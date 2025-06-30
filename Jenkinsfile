@@ -81,7 +81,7 @@ pipeline {
 	stage('Authenticate with GCP, Tag & Push to Artifact Registry') {
             steps {
 		echo 'Authenticate with GCP, tag and Push Image to Artifact Registry'
-		withCredentials([file(credentialsId: 'gcpjmsa', variable: 'gcpCred')]) {
+		withCredentials([file(credentialsId: 'gcpjenkin', variable: 'gcpCred')]) {
     			withEnv(["GOOGLE_APPLICATION_CREDENTIALS=$gcpCred"]) {
 				sh '''
 					echo Activating GCP service account...
