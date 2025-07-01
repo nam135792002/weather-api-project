@@ -49,7 +49,7 @@ pipeline {
   					-Dsonar.projectKey=jenkinsgcp \
   					-Dsonar.sources=. \
   					-Dsonar.host.url=http://172.18.0.3:9000 \
-       					-Dsonar.java.binaries=target/classes \
+       					-Dsonar.java.binaries=WeatherApiService/target/classes \
   					-Dsonar.token=$sonarToken
     				'''
 			}
