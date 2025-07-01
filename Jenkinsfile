@@ -10,7 +10,7 @@ pipeline {
         IMAGE_TAG = "${BUILD_NUMBER}"
 	GCP_PROJECT_ID = "core-respect-464508-a2"
 	FULL_IMAGE_NAME = "us-docker.pkg.dev/${GCP_PROJECT_ID}/java-app-repo-02/${IMAGE_NAME}:${IMAGE_TAG}"
-	SERVICE_NAME = "java-app-service"
+	SERVICE_NAME = "weather-forecast-api-service"
 	REGION = "us-central1"
     }
     stages {
