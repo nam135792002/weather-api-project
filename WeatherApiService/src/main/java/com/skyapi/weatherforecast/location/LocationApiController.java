@@ -59,6 +59,6 @@ public class LocationApiController {
 
     @GetMapping("/hello")
     public ResponseEntity<String> sayHello() {
-        return  ResponseEntity.ok("Hi Nguyen Phuong Nam !!!");
+        return  ResponseEntity.ok("Hi Ri Nguyen");
     }
 }
