@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,16 +50,13 @@ public class LocationApiController {
 
     @PutMapping
     public ResponseEntity<Location> updateLocation(@RequestBody @Valid Location location) {
-        try {
-            Location updatedLocation = locationService.update(location);
-            return ResponseEntity.ok(updatedLocation);
-        } catch (LocationNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Location updatedLocation = locationService.update(location);
+        return ResponseEntity.ok(updatedLocation);
     }
 
-    @GetMapping("/hello")
-    public ResponseEntity<String> sayHello() {
-        return  ResponseEntity.ok("Hi Ri Nguyen Nam!!!!!");
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> deleteLocation(@PathVariable(value = "code") String code) {
+        locationService.delete(code);
+        return ResponseEntity.noContent().build();
     }
 }

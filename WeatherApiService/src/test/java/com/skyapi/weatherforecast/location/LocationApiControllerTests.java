@@ -71,6 +71,28 @@ public class LocationApiControllerTests {
     }
 
     @Test
+    public void addLocation_parameterCodeEmpty_response400BadRequestStatus() throws Exception {
+        Location location = Location.builder()
+                .code("")
+                .cityName("New York City")
+                .regionName("New York")
+                .countryName("United States of America")
+                .countryCode("US")
+                .enabled(true)
+                .build();
+
+        String bodyContent = objectMapper.writeValueAsString(location);
+        this.mockMvc.perform(MockMvcRequestBuilders.post(locationApiPath)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(bodyContent))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error[0]")
+                        .value("Location code must have 3-12 characters"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
     public void listLocations_parameterEmpty_response204NoContentStatus() throws Exception {
         Mockito.when(locationService.listLocations()).thenReturn(Collections.emptyList());
 
@@ -155,7 +177,7 @@ public class LocationApiControllerTests {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    /*@Test
+    @Test
     public void updateLocation_parameterCodeInvalid_response404NotFoundStatus() throws Exception {
         Location location = Location.builder()
                 .code("ABCDEF")
@@ -166,9 +188,71 @@ public class LocationApiControllerTests {
                 .enabled(true)
                 .build();
 
-        Mockito.when(locationService.update(location)).thenThrow(new LocationNotFoundException("No location found"));
+        Mockito.when(locationService.update(location))
+                .thenThrow(new LocationNotFoundException("No location found"));
 
         this.mockMvc.perform(MockMvcRequestBuilders.put(locationApiPath)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(*/
+                        .content(objectMapper.writeValueAsString(location)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void updateLocation_parameterCodeMissed_response400BadRequestStatus() throws Exception {
+        Location location = Location.builder()
+                .cityName("New York City")
+                .regionName("New York")
+                .countryName("United States of America")
+                .countryCode("US")
+                .enabled(true)
+                .build();
+
+        Mockito.when(locationService.update(location)).thenReturn(location);
+
+        this.mockMvc.perform(MockMvcRequestBuilders.put(locationApiPath)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(location)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void updateLocation_parameterLocationValid_response200OkStatus() throws Exception {
+        Location location = Location.builder()
+                .code("NYC_USA")
+                .cityName("New York City")
+                .regionName("New York")
+                .countryName("United States of America")
+                .countryCode("US")
+                .enabled(true)
+                .build();
+
+        Mockito.when(locationService.update(location)).thenReturn(location);
+
+        String bodyContent = objectMapper.writeValueAsString(location);
+        this.mockMvc.perform(MockMvcRequestBuilders.put(locationApiPath)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(bodyContent))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("NYC_USA"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.cityName").value("New York City"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    /*TODO: Write Unit test for API delete location
+    @Test
+    public void deleteLocation_parameterCodeInvalid_response404NotFoundStatus() throws Exception {
+        String code = "ABCDEF";
+
+        Mockito.when(locationService.delete(code)).thenThrow(new LocationNotFoundException("No location found"));
+
+        this.mockMvc.perform(MockMvcRequestBuilders.put(locationApiPath)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(location)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
+     */
 }

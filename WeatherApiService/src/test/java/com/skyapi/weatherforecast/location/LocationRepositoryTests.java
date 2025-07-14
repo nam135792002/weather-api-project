@@ -62,4 +62,14 @@ public class LocationRepositoryTests {
         Assertions.assertThat(location).isNotNull();
         Assertions.assertThat(location.getCode()).isEqualTo(code);
     }
+
+    @Test
+    public void deleteLocation_whenDelete_thenSuccess() {
+        String code = "DELHI_IN";
+        locationRepository.trashByCode(code);
+
+        Location location = locationRepository.findLocationByCode(code).orElse(null);
+
+        Assertions.assertThat(location).isNull();
+    }
 }
