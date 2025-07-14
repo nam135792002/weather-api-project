@@ -52,8 +52,8 @@ pipeline {
 										${SONAR_SCANNER_HOME}/bin/sonar-scanner \
 										-Dsonar.projectKey=jenkinsgcp \
 										-Dsonar.sources=. \
-										-Dsonar.host.url=http://sonarqube-dind:9000
-											-Dsonar.java.binaries=WeatherApiService/target/classes \
+										-Dsonar.host.url=http://sonarqube-dind:9000 \
+										-Dsonar.java.binaries=WeatherApiService/target/classes \
 										-Dsonar.token=$sonarToken
 										'''
 								}
