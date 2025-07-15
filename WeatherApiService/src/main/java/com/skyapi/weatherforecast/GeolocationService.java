@@ -1,37 +1,35 @@
 package com.skyapi.weatherforecast;
 
-import com.ip2location.IP2Location;
-import com.ip2location.IPResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyapi.weatherforecast.common.Location;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class GeolocationService {
-    private final String DBPath = "C:\\Users\\TGC\\IdeaProjects\\WeatherApiProject\\WeatherApiService\\ip2locdb\\IP2LOCATION-LITE-DB3.BIN";
-    private IP2Location ip2Location = new IP2Location();
 
-    public GeolocationService() {
-        try {
-            ip2Location.Open(DBPath);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+    private final RestTemplate restTemplate;
+
+    private final ObjectMapper objectMapper;
+
+    @Value("${ip2location.api.key}")
+    private String apiKeyLocation;
 
     public Location getLocation(String ipAddress) {
-        try {
-            IPResult ipResult = ip2Location.IPQuery(ipAddress);
-            if(!ipResult.getStatus().equals("OK")) {
-                throw new GeolocationException("Geolocation failed with status: " + ipResult.getStatus());
-            }
-            return new Location(ipResult.getCity(), ipResult.getRegion(), ipResult.getCountryLong(),
-                    ipResult.getCountryShort());
-        } catch (IOException e) {
-            throw new GeolocationException("Error querying IP database", e);
-        }
+        String url = String.format("https://api.ip2location.io/?key=%s&ip=%s",
+                apiKeyLocation, ipAddress);
+
+        log.info("Calling IP2Location API for IP: {}", ipAddress);
+        String jsonResponse = restTemplate.getForObject(url, String.class);
+        log.info("Response from IP2Location API: {}", jsonResponse);
+
+//            return new Location(ipResult.getCity(), ipResult.getRegion(), ipResult.getCountryLong(),
+//                    ipResult.getCountryShort());
+        return new Location();
     }
 }
