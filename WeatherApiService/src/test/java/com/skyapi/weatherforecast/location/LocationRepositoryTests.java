@@ -1,6 +1,7 @@
 package com.skyapi.weatherforecast.location;
 
 import com.skyapi.weatherforecast.common.Location;
+import com.skyapi.weatherforecast.common.RealtimeWeather;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -71,5 +74,28 @@ public class LocationRepositoryTests {
         Location location = locationRepository.findLocationByCode(code).orElse(null);
 
         Assertions.assertThat(location).isNull();
+    }
+
+    @Test
+    public void addRealtimeWeatherData_whenSave_thenSuccess() {
+        String code = "NYC_USA";
+        Location location = locationRepository.findLocationByCode(code).orElse(null);
+
+        RealtimeWeather realtimeWeather = Objects.requireNonNull(location).getRealtimeWeather();
+        if(Objects.isNull(realtimeWeather)){
+            realtimeWeather = new RealtimeWeather();
+            realtimeWeather.setLocation(location);
+            location.setRealtimeWeather(realtimeWeather);
+        }
+
+        realtimeWeather.setTemperature(-1);
+        realtimeWeather.setHumidity(30);
+        realtimeWeather.setPrecipitation(40);
+        realtimeWeather.setStatus("Snowy");
+        realtimeWeather.setWindSpeed(15);
+        realtimeWeather.setLastUpdated(LocalDateTime.now());
+
+        Location updatedLocation = locationRepository.save(location);
+        Assertions.assertThat(updatedLocation.getRealtimeWeather().getLocationCode()).isEqualTo(code);
     }
 }
